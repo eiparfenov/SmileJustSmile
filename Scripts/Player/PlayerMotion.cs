@@ -22,6 +22,7 @@ namespace Player
         }
         private void Update()
         {
+            print(MoveDirection);
             transform.Translate(MoveDirection * speed * Time.deltaTime);
         }
         
