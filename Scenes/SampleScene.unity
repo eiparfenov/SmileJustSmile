@@ -253,6 +253,7 @@ GameObject:
   - component: {fileID: 41691866}
   - component: {fileID: 41691867}
   - component: {fileID: 41691868}
+  - component: {fileID: 41691869}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -287,7 +288,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f3eb3a6b2d7f6746878223093815f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
 --- !u!114 &41691868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +300,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0165b5da244e4719bc4c56e84e01d721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  illTime: 0
+--- !u!114 &41691869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41691865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2a6499a8b544b44b3f7429f21a629c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2
+  illTime: 3
 --- !u!1 &47370894
 GameObject:
   m_ObjectHideFlags: 0
@@ -1283,7 +1296,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.493
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

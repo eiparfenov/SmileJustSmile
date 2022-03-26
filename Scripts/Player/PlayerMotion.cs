@@ -5,7 +5,12 @@ namespace Player
 {
     public class PlayerMotion : MonoBehaviour
     {
-        [SerializeField] private float speed;
+        private float _speed;
+
+        public float Speed
+        {
+            set => _speed = value;
+        }
         private Joystick _joystick;
 
         private Vector2 MoveDirection
@@ -22,7 +27,7 @@ namespace Player
         }
         private void Update()
         {
-            transform.Translate(MoveDirection * speed * Time.deltaTime);
+            transform.Translate(MoveDirection * _speed * Time.deltaTime);
         }
         
     }

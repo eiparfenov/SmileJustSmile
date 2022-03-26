@@ -6,7 +6,11 @@ namespace Player
 {
     public class PlayerMask : MonoBehaviour
     {
-        [SerializeField] private float illTime;
+        private float _illTime;
+        public float IllTime
+        {
+            set => _illTime = value;
+        }
         
         private bool _maskOn;
         private float _ill;
@@ -44,9 +48,9 @@ namespace Player
         private void UpdateIll()
         {
             if (_maskOn)
-                _ill += Time.deltaTime / illTime;
+                _ill += Time.deltaTime / _illTime;
             else
-                _ill -= Time.deltaTime / illTime;
+                _ill -= Time.deltaTime / _illTime;
             _ill = Mathf.Clamp01(_ill);
             if (MaskUI)
                 MaskUI.MaskFilled = _ill;
