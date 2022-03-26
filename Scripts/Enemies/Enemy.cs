@@ -9,19 +9,26 @@ namespace Enemies
         [SerializeField] private float speed;
         [SerializeField] private float angularSpeed;
         [Space]
+        [SerializeField] private float angryTime;
+        [SerializeField] private bool ignoreMask;
+        [Space]
         [SerializeField] private float viewAngle;
         [SerializeField] private float viewDistance;
         [Space]
         [SerializeField] private MoveInstruction[] instructions;
-
         [Space] 
         [Header("EnemiesParts")] 
         [SerializeField] private Transform lookField;
 
+        private Scanner _scanner;
         private Vector2 _lookDirection;
-        
+        private float _angry = 0f;
+
         private void Start()
         {
+            _scanner = GetComponentInChildren<Scanner>();
+            _scanner.FieldOfView = viewAngle / 2;
+            _scanner.Range = viewDistance;
             StartCoroutine(Move());
         }
 
@@ -38,7 +45,14 @@ namespace Enemies
                             instructions[cii].Length
                             ));
                     else
-                        yield return new WaitForSeconds(instructions[cii].Length);
+                    {
+                        float t = instructions[cii].Length;
+                        while (t > 0f)
+                        {
+                            t -= Time.deltaTime;
+                            yield return StartCoroutine(Scan());
+                        }
+                    }
                 }
             }
         }
@@ -47,7 +61,7 @@ namespace Enemies
         {
             while (Vector3.Angle(_lookDirection,  dir) > 1f)
             {
-                yield return null;
+                yield return StartCoroutine(Scan());
                 _lookDirection = Vector3.RotateTowards(
                      _lookDirection,
                      dir,
@@ -74,7 +88,7 @@ namespace Enemies
                 float prTime = dir.magnitude / speed;
                 while (progress < 1f)
                 {
-                    yield return null;
+                    yield return StartCoroutine(Scan());
                     progress += Time.deltaTime / prTime;
                     progress = Mathf.Clamp01(progress);
                     transform.position = Vector2.Lerp(start, end, progress);
@@ -82,6 +96,24 @@ namespace Enemies
                 }
             }
             
+        }
+
+        private IEnumerator Scan()
+        {
+            if (_scanner.Scan(ignoreMask))
+                _angry += Time.deltaTime / angryTime;
+            else
+                _angry -= Time.deltaTime / angryTime;
+
+            _angry = Mathf.Clamp01(_angry);
+
+            if (_angry == 1f)
+            {
+                GlobalEventsManager.OnPlayerDead.Invoke(DieType.Killed);
+                print("dead");
+            }
+
+            yield return null;
         }
         
     }

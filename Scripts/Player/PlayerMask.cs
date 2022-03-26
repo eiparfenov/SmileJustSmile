@@ -8,6 +8,7 @@ namespace Player
     public class PlayerMask : MonoBehaviour
     {
         public UnityEvent onPlayerDiedByMask = new UnityEvent();
+        
         public float IllTime
         {
             set => _illTime = value;
@@ -17,6 +18,7 @@ namespace Player
         private bool _maskOn;
         private float _ill;
         private MaskUI _maskUI;
+        private GameObject _collider;
 
         private MaskUI MaskUI
         {
@@ -36,6 +38,7 @@ namespace Player
         private void Start()
         {
             _maskOn = false;
+            _collider = GetComponentInChildren<Collider2D>().gameObject;
         }
 
         private void Update()
@@ -61,6 +64,10 @@ namespace Player
         private void MaskUpDownHandler()
         {
             _maskOn = !_maskOn;
+            if (_maskOn)
+                _collider.tag = "Masked";
+            else
+                _collider.tag = "Unmasked";
         }
     }
 }
