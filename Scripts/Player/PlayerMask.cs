@@ -1,17 +1,19 @@
 using System;
 using UnityEngine;
 using UI;
+using UnityEngine.Events;
 
 namespace Player
 {
     public class PlayerMask : MonoBehaviour
     {
-        private float _illTime;
+        public UnityEvent onPlayerDiedByMask = new UnityEvent();
         public float IllTime
         {
             set => _illTime = value;
         }
         
+        private float _illTime;
         private bool _maskOn;
         private float _ill;
         private MaskUI _maskUI;

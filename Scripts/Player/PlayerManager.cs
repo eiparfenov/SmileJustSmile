@@ -16,6 +16,7 @@ namespace Player
         {
             _mask = GetComponent<PlayerMask>();
             _mask.IllTime = illTime;
+            _mask.onPlayerDiedByMask.AddListener(() => GlobalEventsManager.OnPlayerDead.Invoke(DieType.Mask));
             
             _motion = GetComponent<PlayerMotion>();
             _motion.Speed = speed;
