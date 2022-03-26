@@ -7,6 +7,8 @@ namespace Player
 {
     public class PlayerMask : MonoBehaviour
     {
+        [SerializeField] private LayerMask seeWithMask;
+        [SerializeField] private LayerMask seeWithoutMask;
         public UnityEvent onPlayerDiedByMask = new UnityEvent();
         
         public float IllTime
@@ -19,6 +21,7 @@ namespace Player
         private float _ill;
         private MaskUI _maskUI;
         private GameObject _collider;
+        private Camera _mainCamera;
 
         private MaskUI MaskUI
         {
@@ -39,6 +42,8 @@ namespace Player
         {
             _maskOn = false;
             _collider = GetComponentInChildren<Collider2D>().gameObject;
+            _mainCamera = Camera.main;
+            _mainCamera.cullingMask = seeWithoutMask;
         }
 
         private void Update()
@@ -65,9 +70,15 @@ namespace Player
         {
             _maskOn = !_maskOn;
             if (_maskOn)
+            {
+                _mainCamera.cullingMask = seeWithMask;
                 _collider.tag = "Masked";
+            }
             else
+            {
+                _mainCamera.cullingMask = seeWithoutMask;
                 _collider.tag = "Unmasked";
+            }
         }
     }
 }

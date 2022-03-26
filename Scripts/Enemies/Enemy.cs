@@ -8,14 +8,19 @@ namespace Enemies
     {
         [SerializeField] private float speed;
         [SerializeField] private float angularSpeed;
+        
         [Space]
         [SerializeField] private float angryTime;
         [SerializeField] private bool ignoreMask;
+        
         [Space]
         [SerializeField] private float viewAngle;
         [SerializeField] private float viewDistance;
+        
         [Space]
+        [SerializeField] private MoveInstruction start;
         [SerializeField] private MoveInstruction[] instructions;
+        
         [Space] 
         [Header("EnemiesParts")] 
         [SerializeField] private Transform lookField;
@@ -34,7 +39,8 @@ namespace Enemies
 
         private IEnumerator Move()
         {
-            _lookDirection = Vector2.down;
+            _lookDirection = start.MoveDirection;
+            yield return new WaitForSeconds(start.Length);
             while (true)
             {
                 for (int cii = 0; cii < instructions.Length; cii++)
@@ -137,9 +143,9 @@ namespace Enemies
                 switch (direction)
                 {
                     case Direction.Up:
-                        return Vector2.up;
+                        return Vector2.up + .3f * Vector2.right;
                     case Direction.Down:
-                        return Vector2.down;
+                        return Vector2.down + .3f * Vector2.left;
                     case Direction.Left:
                         return Vector2.left;
                     case Direction.Right:
