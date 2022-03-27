@@ -21,6 +21,11 @@ namespace UI
             head.localPosition = Vector2.zero;
         }
 
+        public void ResetHeadPosition()
+        {
+            head.localPosition = Vector3.zero;
+        }
+
         private void Start()
         {
             _size = GetComponent<RectTransform>().rect.height / 2f;

@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Enemies
 {
@@ -16,6 +19,7 @@ namespace Enemies
         [Space]
         [SerializeField] private float viewAngle;
         [SerializeField] private float viewDistance;
+        [SerializeField] private Gradient scannerGradient;
         
         [Space]
         [SerializeField] private MoveInstruction start;
@@ -28,18 +32,30 @@ namespace Enemies
         private Scanner _scanner;
         private Vector2 _lookDirection;
         private float _angry = 0f;
+        private Image _angryDisplay;
+        private MeshRenderer _scannerMeshRenderer;
+        [FormerlySerializedAs("_states")] [SerializeField] private GameObject[] states;
 
         private void Start()
         {
             _scanner = GetComponentInChildren<Scanner>();
             _scanner.FieldOfView = viewAngle / 2;
             _scanner.Range = viewDistance;
+            _angryDisplay = GetComponentInChildren<Image>();
+            _scannerMeshRenderer = GetComponentInChildren<MeshRenderer>();
             StartCoroutine(Move());
         }
 
         private IEnumerator Move()
         {
             _lookDirection = start.MoveDirection;
+            
+            foreach (var st in states)
+            {
+                st.SetActive(false);
+            }
+            states[start.State].SetActive(true);
+            
             yield return new WaitForSeconds(start.Length);
             while (true)
             {
@@ -48,7 +64,8 @@ namespace Enemies
                     if (instructions[cii].MoveDirection != Vector2.zero)
                         yield return StartCoroutine(MoveToPoint(
                             instructions[cii].MoveDirection,
-                            instructions[cii].Length
+                            instructions[cii].Length,
+                            instructions[cii].State
                             ));
                     else
                     {
@@ -63,9 +80,9 @@ namespace Enemies
             }
         }
 
-        private IEnumerator MoveToPoint(Vector2 dir, int stepsCount)
+        private IEnumerator MoveToPoint(Vector2 dir, int stepsCount, int state)
         {
-            while (Vector3.Angle(_lookDirection,  dir) > 1f)
+            while (Vector3.Angle(_lookDirection,  dir) > 45f)
             {
                 yield return StartCoroutine(Scan());
                 _lookDirection = Vector3.RotateTowards(
@@ -75,12 +92,34 @@ namespace Enemies
                      0f
                      );
                 var position = transform.position;
-                Debug.DrawRay(position, _lookDirection);
                 lookField.rotation = Quaternion.Euler(
                     0f, 
                     0f,
                     Vector3.SignedAngle(_lookDirection, -transform.right, -Vector3.forward)
                     );
+            }
+
+            foreach (var st in states)
+            {
+                st.SetActive(false);
+            }
+            states[state].SetActive(true);
+            
+            while (Vector3.Angle(_lookDirection,  dir) > 1f)
+            {
+                yield return StartCoroutine(Scan());
+                _lookDirection = Vector3.RotateTowards(
+                    _lookDirection,
+                    dir,
+                    angularSpeed * Mathf.Deg2Rad * Time.deltaTime,
+                    0f
+                );
+                var position = transform.position;
+                lookField.rotation = Quaternion.Euler(
+                    0f, 
+                    0f,
+                    Vector3.SignedAngle(_lookDirection, -transform.right, -Vector3.forward)
+                );
             }
             
             _lookDirection = dir;
@@ -112,11 +151,12 @@ namespace Enemies
                 _angry -= Time.deltaTime / angryTime;
 
             _angry = Mathf.Clamp01(_angry);
-
+            _angryDisplay.fillAmount = _angry;
+            _scannerMeshRenderer.material.color = scannerGradient.Evaluate(_angry);
+                
             if (_angry == 1f)
             {
                 GlobalEventsManager.OnPlayerDead.Invoke(DieType.Killed);
-                print("dead");
             }
 
             yield return null;
@@ -155,5 +195,7 @@ namespace Enemies
                 }
             }
         }
+
+        public int State => (int) direction;
     }
 }

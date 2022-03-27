@@ -38,11 +38,12 @@ namespace Player
             }
         }
 
-        private void Start()
+        private void Awake()
         {
+            print("Awake");
             _maskOn = false;
             _collider = GetComponentInChildren<Collider2D>().gameObject;
-            _mainCamera = Camera.main;
+            _mainCamera = FindObjectOfType<Camera>();
             _mainCamera.cullingMask = seeWithoutMask;
         }
 
@@ -51,7 +52,7 @@ namespace Player
             UpdateIll();
             if (_ill == 1f)
             {
-                print("Dead");
+                GlobalEventsManager.OnPlayerDead.Invoke(DieType.Mask);
             }
         }
 
