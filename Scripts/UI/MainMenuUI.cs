@@ -15,9 +15,11 @@ namespace UI
         [SerializeField] private Button levelsButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
+        
         [Header("LevelsUI")]
         [SerializeField] private GameObject levelsUI;
         [SerializeField] private Button backLevelsButton;
+        [SerializeField] private LevelButton[] levelButtons;
         
         [Header("SettingsUI")]
         [SerializeField] private GameObject settingsUI;
@@ -51,13 +53,17 @@ namespace UI
             nextLevelButton.onClick.AddListener(NextLevelButtonPressHandler);
             goToMainDeadButton.onClick.AddListener(ReturnToMainMenuButtonHandler);
             goToMainAliveButton.onClick.AddListener(ReturnToMainMenuButtonHandler);
+            foreach (LevelButton levelButton in levelButtons)
+            {
+                levelButton.onClick.AddListener(LevelSelectedHandler);
+            }
         }
         public void ShowLose(DieType type)
         {
             if (type == DieType.Killed)
-                deadText.text = "Смерть";
-            else
                 deadText.text = "Обнаружение";
+            else
+                deadText.text = "Забвение";
             
             gameUI.SetActive(false);
             deadUI.SetActive(true);
@@ -122,16 +128,25 @@ namespace UI
         private void RestartLevelButtonPressHandler()
         {
             onRestartLevel.Invoke();
+            GoToGameUI();
         }
 
         private void NextLevelButtonPressHandler()
         {
             onNextLevel.Invoke();
+            GoToGameUI();
         }
 
         private void ReturnToMainMenuButtonHandler()
         {
             onReturnToMainMenu.Invoke();
+            GoToMainMenu();
+        }
+
+        private void LevelSelectedHandler()
+        {
+            onStartGame.Invoke();
+            GoToGameUI();
         }
     }
 }

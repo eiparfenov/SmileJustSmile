@@ -20,7 +20,12 @@ namespace Player
             get
             {
                 if (!_joystick)
+                {
                     _joystick = FindObjectOfType<Joystick>();
+                    if (_joystick)
+                        _joystick.ResetHeadPosition();
+                }
+
                 if (!_joystick)
                     return Vector2.zero;
                 else
